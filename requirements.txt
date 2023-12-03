@@ -1,0 +1,7 @@
+pandas
+earthengine-api
+geemap
+geopy
+shapely
+environs
+python-dotenv

@@ -1,0 +1,6 @@
+.env
+.myenv
+*.xls
+*.xlsx
+*.csv
+*.dta
