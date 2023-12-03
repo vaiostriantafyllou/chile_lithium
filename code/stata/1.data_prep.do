@@ -124,23 +124,19 @@ foreach k in distances distances_individual{
 ** Prepare datasets
 // ------------------------------------------------------------------------ //
 
-use "${ndvi_ivas_processed}/all_ivas_with_distances_unique.dta", clear 
+use "${ndvi_ivas_processed}/all_ivas_with_distances_individual_unique.dta", clear 
 
 gen village=inrange(group,12,20)
 
 rename _ndvi ndvi2013 
-rename v3 ndvi2014
-rename v4 ndvi2015
-rename v5 ndvi2016
-rename v6 ndvi2017
-rename v7 ndvi2018
-rename v8 ndvi2019
-rename v9 ndvi2020
-/*
-forvalues i=2013(1)2020 {
-summ ndvi`i'
-replace ndvi`i'=(ndvi`i'-r(mean))/(r(sd))
-	
-}
-*/
-save "$ndvi_processed/local_all_with_distance_correct.dta", replace
+rename v2 ndvi2014
+rename v3 ndvi2015
+rename v4 ndvi2016
+rename v5 ndvi2017
+rename v6 ndvi2018
+rename v7 ndvi2019
+rename v8 ndvi2020
+
+save "${ndvi_ivas_processed}/all_ivas_with_distances_individual_unique_prepared.dta", replace
+
+log close

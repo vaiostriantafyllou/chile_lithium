@@ -70,6 +70,7 @@ eststo n_var_1: reghdfe ndvi inst if village==1, cluster(id) absorb(year id)
 	
 
 eststo n_var_2: reghdfe ndvi inst if village==1, cluster(id) absorb(id c.longitude#i.year c.latitude#i.year)
+	estadd local control1 "Yes"
 	estadd local control2 "Yes"
 	estadd local control3 "Yes"
 
@@ -85,14 +86,13 @@ eststo o_var_2: reghdfe ndvi inst if village==0, cluster(id) absorb(id c.longitu
 	estadd local control3 "Yes"
 
 
-	
 esttab m_* using "$results_tab/reg_res.tex", ///
 			 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
 			 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
 			 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
 			 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
 			 collabels(none) eqlabels(none)  ///
-			 varlabels(inst "Exposure to extraction")  ///
+			 varlabels(inst "Overall")  ///
 			 prehead(\begin{tabular}{lccc}\toprule) posthead(\midrule) ///
 			  mlabels(none) mgroups(none) ///
 			 postfoot(\bottomrule) replace starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
@@ -103,7 +103,7 @@ esttab n_* using "$results_tab/reg_res.tex", ///
 			 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
 			 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
 			 collabels(none) eqlabels(none)  ///
-			 varlabels(inst "Exposure to extraction")  ///
+			 varlabels(inst "Villages")  ///
 			 prehead(\toprule) posthead(\midrule) ///
 			  mlabels(none) mgroups(none) ///
 			 postfoot(\bottomrule) append starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
@@ -114,12 +114,207 @@ esttab o_* using "$results_tab/reg_res.tex", ///
 			 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
 			 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
 			 collabels(none) eqlabels(none)  ///
-			 varlabels(inst "Exposure to extraction")  ///
+			 varlabels(inst "Reserves")  ///
 			 prehead(\toprule) posthead(\midrule) ///
 			  mlabels(none) mgroups(none) ///
 			 postfoot(\bottomrule\end{tabular} @note) append starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
 			 
--
+			 
+** Repeat, clustering at different levels
+forval v = 1/3 {
+	eststo clear
+
+	eststo m_var_1: reghdfe ndvi inst, cluster(group_id`v') absorb(year id)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "No"
+		
+
+	eststo m_var_2: reghdfe ndvi inst, cluster(group_id`v') absorb(id c.longitude#i.year c.latitude#i.year)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "Yes"
+
+		
+	eststo n_var_1: reghdfe ndvi inst if village==1, cluster(group_id`v') absorb(year id)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "No"
+		
+
+	eststo n_var_2: reghdfe ndvi inst if village==1, cluster(group_id`v') absorb(id c.longitude#i.year c.latitude#i.year)
+	    estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "Yes"
+
+	eststo o_var_1: reghdfe ndvi inst if village==0, cluster(group_id`v') absorb(year id)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "No"
+		
+
+	eststo o_var_2: reghdfe ndvi inst if village==0, cluster(group_id`v') absorb(id c.longitude#i.year c.latitude#i.year)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "Yes"
+
+
+		
+	esttab m_* using "$results_tab/reg_res`v'", ///
+				 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
+				 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
+				 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
+				 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
+				 collabels(none) eqlabels(none)  ///
+				 varlabels(inst "Villages")  ///
+				 prehead(\begin{tabular}{lccc}\toprule) posthead(\midrule) ///
+				  mlabels(none) mgroups(none) ///
+				 postfoot(\bottomrule) replace starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
+
+	esttab n_* using "$results_tab/reg_res`v'.tex", ///
+				 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
+				 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
+				 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
+				 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
+				 collabels(none) eqlabels(none)  ///
+				 varlabels(inst "Overall")  ///
+				 prehead(\toprule) posthead(\midrule) ///
+				  mlabels(none) mgroups(none) ///
+				 postfoot(\bottomrule) append starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
+
+	esttab o_* using "$results_tab/reg_res`v'.tex", ///
+				 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
+				 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
+				 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
+				 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
+				 collabels(none) eqlabels(none)  ///
+				 varlabels(inst "Reserves")  ///
+				 prehead(\toprule) posthead(\midrule) ///
+				  mlabels(none) mgroups(none) ///
+				 postfoot(\bottomrule\end{tabular} @note) append starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
+}	 
+
+
+
+// -------------------------------------------------------------------------- //
+** Effect on NDVI by group
+// -------------------------------------------------------------------------- //
+
+use  "${ndvi_ivas_processed}/all_ivas_with_distances_individual_unique_prepared.dta" , clear
+
+egen min_distance=rowmin(distance_ca2015 distance_socaire5 distance_allana1 distance_camar2 distance_mullay1)
+
+keep if min_distance<=50
+
+gen id=_n
+
+keep ndvi* id distance group* latitude longitude distance_ca2015 distance_socaire5 distance_allana1 distance_camar2 distance_mullay1 min_distance
+
+gen aux=1
+
+merge m:1 aux using "${ev_processed}/ev_data_wide.dta", keep(3) nogen
+
+forvalues i=2013/2020 {
+gen inst`i'=min_distance/(value`i')
+}
+
+keep ndvi* id inst* group* longitude latitude
+
+reshape long ndvi inst , i(id longitude latitude) j(year)
+
+merge m:1 year using "${ev_processed}/ev_data.dta", keep(3) nogen
+
+forvalues i = 12(1)20 {
+	
+	summ ndvi if group ==`i'
+	replace ndvi=(ndvi-r(mean))/r(sd) if group ==`i'
+	
+	summ inst if group ==`i'
+	replace inst=(inst-r(mean))/r(sd) if group ==`i'
+
+}
+
+eststo clear
+
+eststo m_var_1: reghdfe ndvi inst if group==12, cluster(id) absorb(year id)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "No"
+		
+
+	eststo m_var_2: reghdfe ndvi inst if group==12, cluster(id) absorb(id c.longitude#i.year c.latitude#i.year)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "Yes"
+		
+	
+	esttab m_* using "$results_tab/reg_res_by_iva.tex", ///
+				 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
+				 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
+				 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
+				 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
+				 collabels(none) eqlabels(none)  ///
+				 varlabels(inst "Effect on group 12")  ///
+				 prehead(\begin{tabular}{lccc}\toprule) posthead(\midrule) ///
+				  mlabels(none) mgroups(none) ///
+				 postfoot(\bottomrule) replace starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs 
+
+forvalues i = 13(1)20 {
+	
+	eststo clear
+	
+	eststo m_var_1: reghdfe ndvi inst if group==`i', cluster(id) absorb(year id)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "No"
+		
+
+	eststo m_var_2: reghdfe ndvi inst if group==`i', cluster(id) absorb(id c.longitude#i.year c.latitude#i.year)
+		estadd local control1 "Yes"
+		estadd local control2 "Yes"
+		estadd local control3 "Yes"
+		
+	
+	esttab m_* using "$results_tab/reg_res_by_iva.tex", ///
+				 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
+				 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
+				 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
+				 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
+				 collabels(none) eqlabels(none)  ///
+				 varlabels(inst "Effect on group `i'")  ///
+				 prehead(\begin{tabular}{lccc}\toprule) posthead(\midrule) ///
+				  mlabels(none) mgroups(none) ///
+				 postfoot(\bottomrule) append starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
+
+}
+
+
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+
 // -------------------------------------------------------------------------- //
 ** Effect on NDVI for different thresholds
 // -------------------------------------------------------------------------- //
@@ -299,123 +494,6 @@ twoway (lpolyci  var_ndvi mean_distance if inrange(group, 12,20), acolor("red") 
 	ylabel(, angle(horizontal)) legend(off) xtitle("Distance in KMs", size(*0.7))  scheme(white_tableau) ///
 	subtitle("NDVI difference in SD", position(11) justification(left) size(*0.7)) ytitle("", size(*0)) plotregion(margin(-2)) xlabel(5(10)50, labsize(*0.7))  ylabel(, labsize(*0.7))
 graph export "$results_fig/lpolyci_ndvi_distance_old_IVAs.png", replace as(png)
-
-
-// -------------------------------------------------------------------------- //
-** Effect on NDVI 6 by group
-// -------------------------------------------------------------------------- //
-
-use  "$ndvi_processed/local_all_with_distance_correct.dta" , clear
-keep if distance<=80
-
-gen id=_n
-
-reshape long ndvi, i(id) j(year)
-
-merge m:1 year using "${path_ev_output}/ev_data.dta", keep(3) nogen
-
-merge m:1 year using "${path_australia_output}/value_australia.dta", keep(3) nogen
-
-gen inst=value/distance
-gen inst2=value_australia/distance
-
-tab group
-
-summ ndvi if group == 1
-replace ndvi=(ndvi-r(mean))/r(sd) if group == 1
-
-summ inst if group == 1
-replace inst=(inst-r(mean))/r(sd) if group == 1
-
-summ inst2 if group == 1
-replace inst2=(inst2-r(mean))/r(sd) if group == 1
-
-forvalues i = 3(1)10 {
-	
-	summ ndvi if group ==`i'
-	replace ndvi=(ndvi-r(mean))/r(sd) if group ==`i'
-	
-	summ inst if group ==`i'
-	replace inst=(inst-r(mean))/r(sd) if group ==`i'
-
-	summ inst2 if group ==`i'
-	replace inst2=(inst2-r(mean))/r(sd) if group ==`i'
-	
-
-}
-
-forvalues i = 12(1)20 {
-	
-	summ ndvi if group ==`i'
-	replace ndvi=(ndvi-r(mean))/r(sd) if group ==`i'
-	
-	summ inst if group ==`i'
-	replace inst=(inst-r(mean))/r(sd) if group ==`i'
-
-	summ inst2 if group ==`i'
-	replace inst2=(inst2-r(mean))/r(sd) if group ==`i'
-
-}
-
-gen inst_vill=inst*village
-gen inst2_vill=inst2*village
-
-
-eststo m_var_1a: reghdfe ndvi inst if group == 1, cluster(id) absorb(year id)
-	estadd local control1 "Yes"
-	estadd local control2 "Yes"
-	estadd local control3 "No"
-
-eststo m_var_1b: reghdfe ndvi inst if group == 1, cluster(id) absorb(year id c.longitude#i.year c.latitude#i.year)
-	estadd local control1 "Yes"
-	estadd local control2 "Yes"
-	estadd local control3 "Yes"
-	
-forvalues i = 3(1)10 {
-	
-	eststo m_var_`i'a: reghdfe ndvi inst if group == `i', cluster(id) absorb(year id)
-		estadd local control1 "Yes"
-		estadd local control2 "Yes"
-		estadd local control3 "No"
-
-	eststo m_var_`i'b: reghdfe ndvi inst if group == `i', cluster(id) absorb(year id c.longitude#i.year c.latitude#i.year)
-		estadd local control1 "Yes"
-		estadd local control2 "Yes"
-		estadd local control3 "Yes"
-}
-
-forvalues i = 12(1)20 {
-	
-	eststo m_var_`i'a: reghdfe ndvi inst if group == `i', cluster(id) absorb(year id)
-		estadd local control1 "Yes"
-		estadd local control2 "Yes"
-		estadd local control3 "No"
-
-	eststo m_var_`i'b: reghdfe ndvi inst if group == `i', cluster(id) absorb(year id c.longitude#i.year c.latitude#i.year)
-		estadd local control1 "Yes"
-		estadd local control2 "Yes"
-		estadd local control3 "Yes"
-}
-
-
-
-
-
-
-
-esttab m_var_1a m_var_1b using "$results_tab/reg_res_by_iva.tex", ///
-			 style(tex) keep(inst) c(b(star fmt(3)) se(par fmt(3))) ///
-			 stats(q N k control1 control2 control3, fmt(%12.3fc %12.0fc %12.2fc %12.0fc %12.0fc) ///
-			 labels("\addlinespace\midrule \vspace{-0.4cm}" "Observations" ///
-			 "\addlinespace\midrule \vspace{-0.4cm}" "Year FE" "Location FE" "Location x Year FE")) ///
-			 collabels(none) eqlabels(none)  ///
-			 varlabels(inst "Exposure to extraction")  ///
-			 prehead(\begin{tabular}{lcc}\toprule) posthead(\midrule) ///
-			  mlabels(none) mgroups(none) ///
-			 postfoot(\bottomrule\end{tabular} @note) replace starlevels(* 0.1 ** 0.05 *** 0.01)  booktabs nolines 
-			 
-
-
 
 
 // -------------------------------------------------------------------------- //

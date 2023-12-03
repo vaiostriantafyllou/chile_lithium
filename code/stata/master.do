@@ -25,6 +25,10 @@ global ev_raw "${dir}/data/raw_data/electric_vehicles"
 global ev_processed "${dir}/data/processed_data/electric_vehicles"
 global ndvi_ivas_processed "${dir}/data/processed_data/ndvi/ivas"
 
+global results_tab "${dir}/output/tables"
+global results_fig "${dir}/output/figures"
+
+
 // -------------------------------------------------------------------------- //
 ** Run the do files
 // -------------------------------------------------------------------------- //
