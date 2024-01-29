@@ -7,14 +7,14 @@
 // -------------------------------------------------------------------------- //
 
 if substr("`c(pwd)'",1,26)=="/Users/vaiostriantafyllou/"{
-	global computer "/Users/vaiostriantafyllou/Desktop"
+	global computer "/Users/vaiostriantafyllou/"
 }
 
 if substr("`c(pwd)'",1,20)=="C:\Users\UserLenovo\" {
 	global computer "C:/Users/UserLenovo/Box"
 }
 
-global dir "${computer}/chile_lithium"
+global dir "${computer}/Library/CloudStorage/Box-Box/Projects/Chile Lithium/chile_lithium"
 
 // -------------------------------------------------------------------------- //
 ** Set individual paths to folders
@@ -24,6 +24,8 @@ global code "${dir}/code/stata"
 global ev_raw "${dir}/data/raw_data/electric_vehicles"
 global ev_processed "${dir}/data/processed_data/electric_vehicles"
 global ndvi_ivas_processed "${dir}/data/processed_data/ndvi/ivas"
+global nighttime_ivas_processed "${dir}/data/processed_data/nighttime/ivas"
+
 
 global results_tab "${dir}/output/tables"
 global results_fig "${dir}/output/figures"
